@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_questionario_multipla_escolha_enunciado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1- Como avaliaria nosso atendimento?"
+        android:textSize="18sp"/>
+
+    <RadioGroup
+        android:id="@+id/item_questionario_multipla_escolha_opcoes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

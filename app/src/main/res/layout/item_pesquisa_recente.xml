@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/card_list_bg_gray"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:background="@color/card_border"
+        android:orientation="vertical"
+        android:paddingBottom="1dp"
+        android:paddingRight="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <TextView
+                android:id="@+id/item_pesquisa_recente_titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pesquisa Satisfação"
+                android:textColor="@color/card_txt_title"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/item_pesquisa_recente_codigo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="n2ub6yOKUn"
+                android:textColor="@color/card_txt_light_gray" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Talk 2 Me</string>
+    <string name="title_activity_detalhe_pesquisa">Detalhe Pesquisa</string>
+    <string name="title_activity_questionario">Questionário</string>
+
+    <!-- Activity Buscar Pesquisa -->
+    <string name="main_pesquisas_recentes">Pesquisas recentes</string>
+    <string name="main_hint_search">n2ub6yOKUn</string>
+    <string name="main_nenhuma_pesquisa_recente">Nenhuma pesquisa recente...</string>
+    <string name="main_buscando">Buscando...</string>
+    <string name="main_buscando_text">Aguarde enquanto buscamos e sincronizamos a pesquisa com o código informado!</string>
+    <string name="main_buscando_cancel">Busca cancelada.</string>
+    <string name="main_nenhuma_pesquisa_encontrada">Nenhuma pesquisa encontrada com o código informado.</string>
+
+    <!-- Activity Detalhe Pesquisa -->
+    <string name="detalhes_pesquisa_questoes">Questões</string>
+    <string name="detalhes_pesquisa_aguarde_carregar">Aguarde enquanto carregamos as questões!</string>
+
+    <!-- Card Iniciar Pesquisa -->
+    <string name="card_iniciar_pesquisa_entrevista">Iniciar nova entrevista</string>
+
+    <!-- Card Detalhe Sincronia -->
+    <string name="card_detalhe_sincronia_voce_nao_esta_sincronizado">Você não está sincronizado</string>
+    <string name="card_detalhe_sincronia_clique_para_sincronizar">CLIQUE PARA SINCRONIZAR</string>
+    <string name="card_detalhe_sincronia_pesquisas_respondidas_armazenadas">Entrevistas respondidas\narmazenadas</string>
+
+    <!-- Card Detalhe Grafico -->
+    <string name="card_detalhe_grafico">Resultados em Gráficos</string>
+    <string name="card_detalhe_grafico_descricao">Análise diante de gráficos as respostas de seu cliente.</string>
+
+    <!-- Activity Questionário -->
+    <string name="questionario_sair_confirmacao">Tem certeza que deseja sair do questionário?\nVocê perderá todas as suas perguntas respondidas até aqui!</string>
+    <string name="proximo">&gt;&gt;</string>
+    <string name="anterior">&lt;&lt;</string>
+    <string name="questionario_validacao_questao_nao_respondida">Por favor, responda a questão atual para prosseguir para a próxima.</string>
+
+    <string name="exception_erro_err_internet_disconnected">Não foi possível encontrar conexão com a internet. Tente novamente!</string>
+
+</resources>

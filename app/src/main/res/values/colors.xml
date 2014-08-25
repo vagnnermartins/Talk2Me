@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="action_bar">#f1f1f1</color>
+    <color name="action_bar_text">#777766</color>
+    <color name="titulo">#2672EC</color>
+    <color name="destaque">#ff6a00</color>
+    <color name="footer">#80AAAAAA</color>
+
+    <!--Card-->
+    <color name="card_txt_light_gray">#999999</color>
+    <color name="card_list_bg_gray">#F5F5F5</color>
+    <color name="card_bg_gray">#FFFFFF</color>
+    <color name="card_border">#AAAAAA</color>
+    <color name="card_txt_title">#074280</color>
+
+</resources>

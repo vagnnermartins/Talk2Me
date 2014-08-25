@@ -32,9 +32,15 @@
 
     <!-- Activity Questionário -->
     <string name="questionario_sair_confirmacao">Tem certeza que deseja sair do questionário?\nVocê perderá todas as suas perguntas respondidas até aqui!</string>
-    <string name="proximo">&gt;&gt;</string>
-    <string name="anterior">&lt;&lt;</string>
+    <string name="symbol_proximo">&gt;&gt;</string>
+    <string name="symbol_anterior">&lt;&lt;</string>
+    <string name="questionario_voltar">Anterior</string>
+    <string name="questionario_proximo">Próximo</string>
+    <string name="questionario_finalizar">Finalizar</string>
     <string name="questionario_validacao_questao_nao_respondida">Por favor, responda a questão atual para prosseguir para a próxima.</string>
+    <string name="questionario_validacao_ultima_questao">Por favor, responda a questão para finalizar o seu questionário.</string>
+    <string name="questionario_salvo_com_sucesso">Questionário salvo com sucesso!</string>
+    <string name="questionario_salvando_questionario">Salvando questionário...</string>
 
     <string name="exception_erro_err_internet_disconnected">Não foi possível encontrar conexão com a internet. Tente novamente!</string>
 

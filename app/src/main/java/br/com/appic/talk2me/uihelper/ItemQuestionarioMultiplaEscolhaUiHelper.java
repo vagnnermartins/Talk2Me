@@ -1,11 +1,12 @@
 package br.com.appic.talk2me.uihelper;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import br.com.appic.talk2me.R;
+import br.com.appic.talk2me.callback.Callback;
+import br.com.appic.talk2me.parse.QuestaoParse;
 import br.com.appic.talk2me.parse.RespostaParse;
 
 /**
@@ -15,10 +16,9 @@ public class ItemQuestionarioMultiplaEscolhaUiHelper extends  AbstractItemQuesti
 
     public TextView enunciado;
     public RadioGroup opcoes;
-    public RespostaParse respostaSelecionada;
 
-    public ItemQuestionarioMultiplaEscolhaUiHelper(View view) {
-        super(view);
+    public ItemQuestionarioMultiplaEscolhaUiHelper(View view, Callback callback, QuestaoParse questao) {
+        super(view, callback, questao);
         init();
     }
 
@@ -32,8 +32,8 @@ public class ItemQuestionarioMultiplaEscolhaUiHelper extends  AbstractItemQuesti
         return new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                respondido = true;
                 respostaSelecionada = (RespostaParse) radioGroup.findViewById(i).getTag();
+                callback.onReturn(null, questao, respostaSelecionada);
             }
         };
     }

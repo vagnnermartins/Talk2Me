@@ -2,29 +2,24 @@ package br.com.appic.talk2me;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import br.com.appic.talk2me.R;
 import br.com.appic.talk2me.app.App;
 import br.com.appic.talk2me.enums.StatusEnum;
 import br.com.appic.talk2me.parse.EntrevistaParse;
-import br.com.appic.talk2me.parse.PesquisaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
 import br.com.appic.talk2me.parse.RespostaParse;
 import br.com.appic.talk2me.parse.ResultadoParse;
 import br.com.appic.talk2me.service.EntrevistaService;
-import br.com.appic.talk2me.service.PesquisaService;
 import br.com.appic.talk2me.service.RespostaService;
 import br.com.appic.talk2me.service.ResultadoService;
 import br.com.appic.talk2me.uihelper.CardDetalheGraficoUiHelper;
@@ -164,7 +159,7 @@ public class DetalhePesquisaActivity extends Activity {
                     @Override
                     public void done(List<ResultadoParse> result, ParseException error) {
                         if(error == null){
-                            ResultadoService.salvarResultados(result);
+                            //ResultadoService.salvarResultados(result, null);
                         }
                     }
                 };

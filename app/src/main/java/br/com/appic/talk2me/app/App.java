@@ -18,6 +18,7 @@ import br.com.appic.talk2me.parse.EntrevistaParse;
 import br.com.appic.talk2me.parse.PesquisaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
 import br.com.appic.talk2me.parse.RespostaParse;
+import br.com.appic.talk2me.parse.ResultadoParse;
 import br.com.appic.talk2me.util.ConnectionDetectorUtils;
 
 /**
@@ -50,6 +51,7 @@ public class App extends Application {
         ParseObject.registerSubclass(PesquisaParse.class);
         ParseObject.registerSubclass(QuestaoParse.class);
         ParseObject.registerSubclass(RespostaParse.class);
+        ParseObject.registerSubclass(ResultadoParse.class);
         Parse.initialize(this, Constants.PARSE_ID, Constants.PARSE_CLIENT_KEY);
     }
 

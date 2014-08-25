@@ -28,7 +28,8 @@
         </activity>
         <activity
             android:name=".QuestionarioActivity"
-            android:label="@string/title_activity_questionario" >
+            android:label="@string/title_activity_questionario"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

@@ -1,7 +1,9 @@
 package br.com.appic.talk2me.service;
 
 import com.parse.FindCallback;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class ResultadoService {
         return query;
     }
 
-    public static void salvarResultados(List<ResultadoParse> resultados){
+    public static void salvarResultadosInLocal(List<ParseObject> resultados, SaveCallback saveCallback){
+        ParseObject.pinAllInBackground(resultados, saveCallback);
     }
 }

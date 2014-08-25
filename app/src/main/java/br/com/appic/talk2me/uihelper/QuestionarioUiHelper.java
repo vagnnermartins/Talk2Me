@@ -14,6 +14,8 @@ public class QuestionarioUiHelper {
     public final View view;
     public TextView paginacao;
     public ViewFlipper main;
+    public TextView avancar;
+    public TextView voltar;
 
     public QuestionarioUiHelper(View view){
         this.view = view;
@@ -23,5 +25,7 @@ public class QuestionarioUiHelper {
     private void init() {
         paginacao = (TextView) view.findViewById(R.id.questionario_paginacao);
         main = (ViewFlipper) view.findViewById(R.id.questionario_main);
+        avancar = (TextView) view.findViewById(R.id.questionario_avancar);
+        voltar = (TextView) view.findViewById(R.id.questionario_voltar);
     }
 }

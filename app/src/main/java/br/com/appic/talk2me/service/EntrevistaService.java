@@ -5,7 +5,6 @@ import com.parse.ParseQuery;
 
 import br.com.appic.talk2me.parse.EntrevistaParse;
 import br.com.appic.talk2me.parse.PesquisaParse;
-import br.com.appic.talk2me.parse.RespostaParse;
 
 /**
  * Created by vagnnermartins on 22/08/14.

@@ -1,13 +1,18 @@
 package br.com.appic.talk2me;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,13 +20,12 @@ import java.util.List;
 
 import br.com.appic.talk2me.app.App;
 import br.com.appic.talk2me.enums.StatusEnum;
+import br.com.appic.talk2me.parse.AlternativaParse;
 import br.com.appic.talk2me.parse.EntrevistaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
-import br.com.appic.talk2me.parse.RespostaParse;
-import br.com.appic.talk2me.parse.ResultadoParse;
+import br.com.appic.talk2me.service.AlternativaService;
 import br.com.appic.talk2me.service.EntrevistaService;
 import br.com.appic.talk2me.service.RespostaService;
-import br.com.appic.talk2me.service.ResultadoService;
 import br.com.appic.talk2me.uihelper.CardDetalheGraficoUiHelper;
 import br.com.appic.talk2me.uihelper.CardDetalheSincroniaUiHelper;
 import br.com.appic.talk2me.uihelper.CardIniciarPesquisaUiHelper;
@@ -32,6 +36,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 public class DetalhePesquisaActivity extends Activity {
 
     private static final int ITENS_PARA_ATUALIZAR = 2;
+    private static final int QUESTIONARIO_CODE = 0;
     private int itensAtualizados;
 
     private App app;
@@ -42,6 +47,7 @@ public class DetalhePesquisaActivity extends Activity {
     private CardDetalheGraficoUiHelper cardDetalheGraficoUiHelper;
 
     private PullToRefreshAttacher attacher;
+    private ProgressDialog progressSincronizar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +88,7 @@ public class DetalhePesquisaActivity extends Activity {
 
     private void statusInicio() {
         itensAtualizados = ITENS_PARA_ATUALIZAR;
-        RespostaService.buscarRespostasInLocal(app.getPesquisaParse(), configurarBuscarRespostasCallback());
+        AlternativaService.buscarRespostasInLocal(app.getPesquisaParse(), configurarBuscarRespostasCallback());
         EntrevistaService.buscarEntrevistaInLocal(app.getPesquisaParse(), configurarBuscarEntrevistaCallback());
     }
 
@@ -94,16 +100,16 @@ public class DetalhePesquisaActivity extends Activity {
         }
     }
 
-    private FindCallback<RespostaParse> configurarBuscarRespostasCallback() {
-        return new FindCallback<RespostaParse>() {
+    private FindCallback<AlternativaParse> configurarBuscarRespostasCallback() {
+        return new FindCallback<AlternativaParse>() {
             @Override
-            public void done(List<RespostaParse> result, ParseException error) {
+            public void done(List<AlternativaParse> result, ParseException error) {
                 if(error == null){
-                    app.setQuestoesRepostas(new HashMap<QuestaoParse, List<RespostaParse>>());
-                    for(RespostaParse resposta : result){
-                        List<RespostaParse> list = app.getQuestoesRepostas().get(resposta.getQuestao());
+                    app.setQuestoesRepostas(new HashMap<QuestaoParse, List<AlternativaParse>>());
+                    for(AlternativaParse resposta : result){
+                        List<AlternativaParse> list = app.getQuestoesRepostas().get(resposta.getQuestao());
                         if(list == null){
-                            list = new ArrayList<RespostaParse>();
+                            list = new ArrayList<AlternativaParse>();
                         }
                         list.add(resposta);
                         app.getQuestoesRepostas().put(resposta.getQuestao(), list);
@@ -121,7 +127,9 @@ public class DetalhePesquisaActivity extends Activity {
             public void done(List<EntrevistaParse> result, ParseException error) {
                 if(error == null){
                     app.setEntrevistas(result);
-                    if(!result.isEmpty()){
+                    if(result.isEmpty()){
+                        cardDetalheSincroniaUiHelper.view.setVisibility(View.GONE);
+                    }else{
                         cardDetalheSincroniaUiHelper.qtdPesquisas.setText(String.valueOf(result.size()));
                         cardDetalheSincroniaUiHelper.view.setVisibility(View.VISIBLE);
                     }
@@ -137,12 +145,16 @@ public class DetalhePesquisaActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if(isCarregado){
-                    NavegacaoUtil.navegar(DetalhePesquisaActivity.this, QuestionarioActivity.class);
+                    NavegacaoUtil.navegarComResult(DetalhePesquisaActivity.this, QuestionarioActivity.class, QUESTIONARIO_CODE);
                 }else{
-                    Toast.makeText(DetalhePesquisaActivity.this, R.string.detalhes_pesquisa_aguarde_carregar, Toast.LENGTH_SHORT).show();
+                    exibirMensagem(R.string.detalhes_pesquisa_aguarde_carregar);
                 }
             }
         };
+    }
+
+    private void exibirMensagem(int resourceText) {
+        Toast.makeText(this, resourceText, Toast.LENGTH_SHORT).show();
     }
 
     private View.OnClickListener configurarOnSincronizarClickListener() {
@@ -150,21 +162,63 @@ public class DetalhePesquisaActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if(app.isInternetConnection()){
-                    ResultadoService.buscarResultados(app.getPesquisaParse(), configurarBuscarResultadosCallback());
+                    progressSincronizar = ProgressDialog.show(DetalhePesquisaActivity.this,
+                            getString(R.string.card_detalhe_sincronia_sincronizando),
+                            getString(R.string.card_detalhe_sincronia_sincronizando_msg), true, false);
+                    RespostaService.buscarRespostas(app.getPesquisaParse(), configurarBuscarResultadosCallback());
                 }
             }
 
-            private FindCallback<ResultadoParse> configurarBuscarResultadosCallback() {
-                return new FindCallback<ResultadoParse>() {
+            private FindCallback<ParseObject> configurarBuscarResultadosCallback() {
+                return new FindCallback<ParseObject>() {
                     @Override
-                    public void done(List<ResultadoParse> result, ParseException error) {
+                    public void done(List<ParseObject> result, ParseException error) {
                         if(error == null){
-                            //ResultadoService.salvarResultados(result, null);
+                            RespostaService.salvarRespostas(result, configurarSincronizarResultadosCallback());
                         }
+                    }
+
+                    private SaveCallback configurarSincronizarResultadosCallback() {
+                        return new SaveCallback() {
+                            @Override
+                            public void done(ParseException error) {
+                                if(error == null){
+                                    RespostaService.deletarRespostasInLocal(configurarDeletarEntrevistasCallback());
+                                }else{
+                                    exibirMensagem(R.string.card_detalhe_sincronia_erro_sincronizar_entrevistas);
+                                    progressSincronizar.dismiss();
+                                }
+                            }
+
+                            private DeleteCallback configurarDeletarEntrevistasCallback() {
+                                return new DeleteCallback() {
+                                    @Override
+                                    public void done(ParseException error) {
+                                        if(error == null){
+                                            exibirMensagem(R.string.card_detalhe_sincronia_entrevistas_sincronizada_com_sucesso);
+                                            verificaStatus(StatusEnum.INICIO);
+                                            progressSincronizar.dismiss();
+                                        }
+                                    }
+                                };
+                            }
+                        };
                     }
                 };
             }
         };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case QUESTIONARIO_CODE:
+                    verificaStatus(StatusEnum.INICIO);
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

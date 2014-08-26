@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,11 +23,11 @@ import java.util.Map;
 import br.com.appic.talk2me.app.App;
 import br.com.appic.talk2me.callback.Callback;
 import br.com.appic.talk2me.enums.TipoQuestaoEnum;
+import br.com.appic.talk2me.parse.AlternativaParse;
 import br.com.appic.talk2me.parse.EntrevistaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
 import br.com.appic.talk2me.parse.RespostaParse;
-import br.com.appic.talk2me.parse.ResultadoParse;
-import br.com.appic.talk2me.service.ResultadoService;
+import br.com.appic.talk2me.service.RespostaService;
 import br.com.appic.talk2me.uihelper.ItemQuestionarioMultiplaEscolhaUiHelper;
 import br.com.appic.talk2me.uihelper.QuestionarioUiHelper;
 import br.com.appic.talk2me.util.DialogUtil;
@@ -38,7 +37,7 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
     private App app;
     private QuestionarioUiHelper uiHelper;
     private EntrevistaParse entrevista;
-    private Map<QuestaoParse, RespostaParse> respostas;
+    private Map<QuestaoParse, AlternativaParse> respostas;
 
     private float lastX;
     private ProgressDialog progressSalvar;
@@ -62,13 +61,13 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
         entrevista = new EntrevistaParse();
         entrevista.setInicio(new Date());
         entrevista.setPesquisa(app.getPesquisaParse());
-        respostas = new HashMap<QuestaoParse, RespostaParse>();
+        respostas = new HashMap<QuestaoParse, AlternativaParse>();
         carregarQuestoes();
     }
 
     private void carregarQuestoes() {
         View view = null;
-        for(Map.Entry<QuestaoParse, List<RespostaParse>> item : app.getQuestoesRepostas().entrySet()){
+        for(Map.Entry<QuestaoParse, List<AlternativaParse>> item : app.getQuestoesRepostas().entrySet()){
             QuestaoParse questao = item.getKey();
             if(questao.getTipoQuestao() == TipoQuestaoEnum.MULTIPLA_ESCOLHA.getTipoQuestao()){
                 View viewItem = getLayoutInflater().inflate(R.layout.item_questionario_multipla_escolha, null);
@@ -76,7 +75,7 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
                 itemUiHelper.enunciado.setText(questao.getTitulo());
                 view = itemUiHelper.view;
                 view.setTag(itemUiHelper);
-                for(RespostaParse respota : item.getValue()){
+                for(AlternativaParse respota : item.getValue()){
                     RadioButton opcao = new RadioButton(this);
                     opcao.setText(respota.getTitulo());
                     opcao.setTag(respota);
@@ -93,7 +92,7 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
             @Override
             public void onReturn(Exception error, Object... objects) {
                 QuestaoParse questao = (QuestaoParse) objects[0];
-                RespostaParse resposta = (RespostaParse) objects[1];
+                AlternativaParse resposta = (AlternativaParse) objects[1];
                 respostas.put(questao, resposta);
             }
         };
@@ -137,6 +136,8 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
         }
         if(uiHelper.main.getDisplayedChild() == (uiHelper.main.getChildCount() - 1)){
             uiHelper.avancar.setText(R.string.questionario_finalizar);
+        }else{
+            uiHelper.avancar.setText(R.string.questionario_proximo);
         }
     }
 
@@ -177,19 +178,18 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
     }
 
     private void salvar() {
-        progressSalvar = ProgressDialog.show(this, "Salvando", "Aguarde enquanto salvamos as respostas de seu questionário", true, false);
+        progressSalvar = ProgressDialog.show(this, getString(R.string.questionario_salvando_questionario),
+                getString(R.string.questionario_salvando_questionario_msg), true, false);
         entrevista.setFim(new Date());
         List<ParseObject> resultados = new ArrayList<ParseObject>();
-        ResultadoParse resultado;
-        for(Map.Entry<QuestaoParse, RespostaParse> item : respostas.entrySet()){
-            resultado = new ResultadoParse();
+        RespostaParse resultado;
+        for(Map.Entry<QuestaoParse, AlternativaParse> item : respostas.entrySet()){
+            resultado = new RespostaParse();
             resultado.setResposta(item.getValue());
             resultado.setEntrevista(entrevista);
             resultados.add(resultado);
         }
-        ResultadoService.salvarResultadosInLocal(resultados, configurarOnSalvarResultadosCallback());
-        exibirMensagem(R.string.questionario_salvando_questionario);
-        super.onBackPressed();
+        RespostaService.salvarRespostasInLocal(resultados, configurarOnSalvarResultadosCallback());
     }
 
     private SaveCallback configurarOnSalvarResultadosCallback() {
@@ -198,7 +198,11 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
             public void done(ParseException error) {
                 if(error == null){
                     exibirMensagem(R.string.questionario_salvo_com_sucesso);
+                    progressSalvar.dismiss();
+                }else{
+                    salvar();
                 }
+                setResult(RESULT_OK);
                 finish();
             }
         };

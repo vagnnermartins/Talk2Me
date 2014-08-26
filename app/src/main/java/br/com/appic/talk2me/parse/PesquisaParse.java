@@ -11,11 +11,18 @@ import java.io.Serializable;
 @ParseClassName("Pesquisa")
 public class PesquisaParse extends ParseObject implements Serializable{
 
+    private String titulo;
+
     public String getTitulo(){
         return getString("titulo");
     }
 
     public EmpresaParse getEmpresa(){
         return (EmpresaParse) getParseObject("empresa");
+    }
+
+    @Override
+    public String toString() {
+        return getObjectId() + " " + getTitulo();
     }
 }

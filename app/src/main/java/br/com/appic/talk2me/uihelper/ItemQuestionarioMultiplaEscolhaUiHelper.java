@@ -6,8 +6,8 @@ import android.widget.TextView;
 
 import br.com.appic.talk2me.R;
 import br.com.appic.talk2me.callback.Callback;
+import br.com.appic.talk2me.parse.AlternativaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
-import br.com.appic.talk2me.parse.RespostaParse;
 
 /**
  * Created by vagnnermartins on 25/08/14.
@@ -32,7 +32,7 @@ public class ItemQuestionarioMultiplaEscolhaUiHelper extends  AbstractItemQuesti
         return new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                respostaSelecionada = (RespostaParse) radioGroup.findViewById(i).getTag();
+                respostaSelecionada = (AlternativaParse) radioGroup.findViewById(i).getTag();
                 callback.onReturn(null, questao, respostaSelecionada);
             }
         };

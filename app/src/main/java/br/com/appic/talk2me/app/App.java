@@ -13,12 +13,12 @@ import java.util.Map;
 
 import br.com.appic.talk2me.R;
 import br.com.appic.talk2me.constants.Constants;
+import br.com.appic.talk2me.parse.AlternativaParse;
 import br.com.appic.talk2me.parse.EmpresaParse;
 import br.com.appic.talk2me.parse.EntrevistaParse;
 import br.com.appic.talk2me.parse.PesquisaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
 import br.com.appic.talk2me.parse.RespostaParse;
-import br.com.appic.talk2me.parse.ResultadoParse;
 import br.com.appic.talk2me.util.ConnectionDetectorUtils;
 
 /**
@@ -28,7 +28,7 @@ public class App extends Application {
 
     private Map<String, PesquisaParse> pesquisasRecentes;
     private PesquisaParse pesquisaParse;
-    private Map<QuestaoParse, List<RespostaParse>> questoesRepostas;
+    private Map<QuestaoParse, List<AlternativaParse>> questoesRepostas;
     private List<EntrevistaParse> entrevistas;
     private List<ParseObject> resultados;
 
@@ -50,8 +50,8 @@ public class App extends Application {
         ParseObject.registerSubclass(EntrevistaParse.class);
         ParseObject.registerSubclass(PesquisaParse.class);
         ParseObject.registerSubclass(QuestaoParse.class);
+        ParseObject.registerSubclass(AlternativaParse.class);
         ParseObject.registerSubclass(RespostaParse.class);
-        ParseObject.registerSubclass(ResultadoParse.class);
         Parse.initialize(this, Constants.PARSE_ID, Constants.PARSE_CLIENT_KEY);
     }
 
@@ -71,11 +71,11 @@ public class App extends Application {
         this.pesquisaParse = pesquisaParse;
     }
 
-    public Map<QuestaoParse, List<RespostaParse>> getQuestoesRepostas() {
+    public Map<QuestaoParse, List<AlternativaParse>> getQuestoesRepostas() {
         return questoesRepostas;
     }
 
-    public void setQuestoesRepostas(Map<QuestaoParse, List<RespostaParse>> questoesRepostas) {
+    public void setQuestoesRepostas(Map<QuestaoParse, List<AlternativaParse>> questoesRepostas) {
         this.questoesRepostas = questoesRepostas;
     }
 

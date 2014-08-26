@@ -1,6 +1,7 @@
 package br.com.appic.talk2me.uihelper;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ public class MainUiHelper {
     public SearchView search;
     public ListView pesquisasRecentes;
     public TextView pesquisaRecenteResultado;
+    public ImageView tirarFoto;
 
     public MainUiHelper(View view){
         this.view = view;
@@ -26,5 +28,6 @@ public class MainUiHelper {
         search = (SearchView) view.findViewById(R.id.main_search);
         pesquisasRecentes = (ListView) view.findViewById(R.id.main_pesquisas_recentes);
         pesquisaRecenteResultado = (TextView) view.findViewById(R.id.main_pesquisas_recentes_resultado);
+        tirarFoto = (ImageView) view.findViewById(R.id.main_tirar_foto);
     }
 }

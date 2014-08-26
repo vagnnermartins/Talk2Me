@@ -4,15 +4,24 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 /**
- * Created by vagnnermartins on 21/08/14.
+ * Created by vagnnermartins on 22/08/14.
  */
 @ParseClassName("Resposta")
 public class RespostaParse extends ParseObject {
 
-    public String getTitulo(){
-        return getString("titulo");
+    public AlternativaParse getResposta(){
+        return (AlternativaParse) getParseObject("alternativa");
     }
-    public QuestaoParse getQuestao(){
-        return (QuestaoParse) getParseObject("questao");
+
+    public void setResposta(AlternativaParse resposta){
+        put("alternativa", resposta);
+    }
+
+    public EntrevistaParse getEntrevista(){
+        return (EntrevistaParse) getParseObject("entrevista");
+    }
+
+    public void setEntrevista(EntrevistaParse entrevista){
+        put("entrevista", entrevista);
     }
 }

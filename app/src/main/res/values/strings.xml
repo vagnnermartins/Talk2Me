@@ -25,6 +25,10 @@
     <string name="card_detalhe_sincronia_voce_nao_esta_sincronizado">Você não está sincronizado</string>
     <string name="card_detalhe_sincronia_clique_para_sincronizar">CLIQUE PARA SINCRONIZAR</string>
     <string name="card_detalhe_sincronia_pesquisas_respondidas_armazenadas">Entrevistas respondidas\narmazenadas</string>
+    <string name="card_detalhe_sincronia_entrevistas_sincronizada_com_sucesso">Entrevista sincronizada com sucesso!</string>
+    <string name="card_detalhe_sincronia_erro_sincronizar_entrevistas">Erro ao sincronizar entrevistas armazenadas, tente novamente!</string>
+    <string name="card_detalhe_sincronia_sincronizando">Sincronizando...</string>
+    <string name="card_detalhe_sincronia_sincronizando_msg">Aguarde enquanto sincronizamos as entrevistas armazenadas!</string>
 
     <!-- Card Detalhe Grafico -->
     <string name="card_detalhe_grafico">Resultados em Gráficos</string>
@@ -40,7 +44,8 @@
     <string name="questionario_validacao_questao_nao_respondida">Por favor, responda a questão atual para prosseguir para a próxima.</string>
     <string name="questionario_validacao_ultima_questao">Por favor, responda a questão para finalizar o seu questionário.</string>
     <string name="questionario_salvo_com_sucesso">Questionário salvo com sucesso!</string>
-    <string name="questionario_salvando_questionario">Salvando questionário...</string>
+    <string name="questionario_salvando_questionario">Salvando...</string>
+    <string name="questionario_salvando_questionario_msg">Aguarde enquanto salvamos as respostas de seu questionário</string>
 
     <string name="exception_erro_err_internet_disconnected">Não foi possível encontrar conexão com a internet. Tente novamente!</string>
 

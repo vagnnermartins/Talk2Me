@@ -12,12 +12,12 @@ import br.com.appic.talk2me.parse.QuestaoParse;
 /**
  * Created by vagnnermartins on 25/08/14.
  */
-public class ItemQuestionarioMultiplaEscolhaUiHelper extends  AbstractItemQuestionario{
+public class ItemQuestaoMultiplaEscolhaUiHelper extends  AbstractItemQuestionario{
 
     public TextView enunciado;
     public RadioGroup opcoes;
 
-    public ItemQuestionarioMultiplaEscolhaUiHelper(View view, Callback callback, QuestaoParse questao) {
+    public ItemQuestaoMultiplaEscolhaUiHelper(View view, Callback callback, QuestaoParse questao) {
         super(view, callback, questao);
         init();
     }
@@ -31,8 +31,8 @@ public class ItemQuestionarioMultiplaEscolhaUiHelper extends  AbstractItemQuesti
     private RadioGroup.OnCheckedChangeListener configurarOnCheckedChangeListener() {
         return new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                respostaSelecionada = (AlternativaParse) radioGroup.findViewById(i).getTag();
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                respostaSelecionada = (AlternativaParse) radioGroup.findViewById(id).getTag();
                 callback.onReturn(null, questao, respostaSelecionada);
             }
         };

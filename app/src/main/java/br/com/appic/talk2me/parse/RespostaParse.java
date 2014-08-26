@@ -9,11 +9,11 @@ import com.parse.ParseObject;
 @ParseClassName("Resposta")
 public class RespostaParse extends ParseObject {
 
-    public AlternativaParse getResposta(){
+    public AlternativaParse getAlternativa(){
         return (AlternativaParse) getParseObject("alternativa");
     }
 
-    public void setResposta(AlternativaParse resposta){
+    public void setAlternativa(AlternativaParse resposta){
         put("alternativa", resposta);
     }
 

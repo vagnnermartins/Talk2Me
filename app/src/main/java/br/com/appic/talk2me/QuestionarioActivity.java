@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.com.appic.talk2me.app.App;
 import br.com.appic.talk2me.callback.Callback;
@@ -28,7 +30,9 @@ import br.com.appic.talk2me.parse.EntrevistaParse;
 import br.com.appic.talk2me.parse.QuestaoParse;
 import br.com.appic.talk2me.parse.RespostaParse;
 import br.com.appic.talk2me.service.RespostaService;
-import br.com.appic.talk2me.uihelper.ItemQuestionarioMultiplaEscolhaUiHelper;
+import br.com.appic.talk2me.uihelper.AbstractItemQuestionario;
+import br.com.appic.talk2me.uihelper.ItemQuestaoMultiplaEscolhaUiHelper;
+import br.com.appic.talk2me.uihelper.ItemQuestaoMultiplaRespostaUiHelper;
 import br.com.appic.talk2me.uihelper.QuestionarioUiHelper;
 import br.com.appic.talk2me.util.DialogUtil;
 
@@ -37,7 +41,8 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
     private App app;
     private QuestionarioUiHelper uiHelper;
     private EntrevistaParse entrevista;
-    private Map<QuestaoParse, AlternativaParse> respostas;
+    private Map<QuestaoParse, AlternativaParse> respostasMultiplaEscolha;
+    private Map<QuestaoParse, Set<AlternativaParse>> respostasMultiplaRespostas;
 
     private float lastX;
     private ProgressDialog progressSalvar;
@@ -61,7 +66,8 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
         entrevista = new EntrevistaParse();
         entrevista.setInicio(new Date());
         entrevista.setPesquisa(app.getPesquisaParse());
-        respostas = new HashMap<QuestaoParse, AlternativaParse>();
+        respostasMultiplaEscolha = new HashMap<QuestaoParse, AlternativaParse>();
+        respostasMultiplaRespostas = new HashMap<QuestaoParse, Set<AlternativaParse>>();
         carregarQuestoes();
     }
 
@@ -71,7 +77,7 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
             QuestaoParse questao = item.getKey();
             if(questao.getTipoQuestao() == TipoQuestaoEnum.MULTIPLA_ESCOLHA.getTipoQuestao()){
                 View viewItem = getLayoutInflater().inflate(R.layout.item_questionario_multipla_escolha, null);
-                ItemQuestionarioMultiplaEscolhaUiHelper itemUiHelper = new ItemQuestionarioMultiplaEscolhaUiHelper(viewItem, configurarOnItemSelectedCallback(), questao);
+                ItemQuestaoMultiplaEscolhaUiHelper itemUiHelper = new ItemQuestaoMultiplaEscolhaUiHelper(viewItem, configurarOnItemMultiplaEscolhaSelectedCallback(), questao);
                 itemUiHelper.enunciado.setText(questao.getTitulo());
                 view = itemUiHelper.view;
                 view.setTag(itemUiHelper);
@@ -81,19 +87,42 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
                     opcao.setTag(respota);
                     itemUiHelper.opcoes.addView(opcao);
                 }
+            }else if(questao.getTipoQuestao() == TipoQuestaoEnum.MULTIPLA_RESPOSTAS.getTipoQuestao()){
+                View viewItem = getLayoutInflater().inflate(R.layout.item_questionario_multipla_respostas, null);
+                ItemQuestaoMultiplaRespostaUiHelper itemUiHelper = new ItemQuestaoMultiplaRespostaUiHelper(viewItem, configurarOnItemMultiplaRespostaSelectedCallback(), questao);
+                view = itemUiHelper.view;
+                view.setTag(itemUiHelper);
+                for(AlternativaParse respota : item.getValue()){
+                    CheckBox opcao = new CheckBox(this);
+                    opcao.setText(respota.getTitulo());
+                    opcao.setTag(respota);
+                    opcao.setOnCheckedChangeListener(itemUiHelper.configurarOnCheckedChangeListener());
+                    itemUiHelper.opcoes.addView(opcao);
+                }
             }
             uiHelper.main.addView(view);
         }
         verificarPaginacao(uiHelper.main.getDisplayedChild());
     }
 
-    private Callback configurarOnItemSelectedCallback() {
+    private Callback configurarOnItemMultiplaRespostaSelectedCallback() {
+        return new Callback() {
+            @Override
+            public void onReturn(Exception error, Object... objects) {
+                QuestaoParse questao = (QuestaoParse) objects[0];
+                Set<AlternativaParse> alternativas = (Set<AlternativaParse>) objects[1];
+                respostasMultiplaRespostas.put(questao, alternativas);
+            }
+        };
+    }
+
+    private Callback configurarOnItemMultiplaEscolhaSelectedCallback() {
         return new Callback() {
             @Override
             public void onReturn(Exception error, Object... objects) {
                 QuestaoParse questao = (QuestaoParse) objects[0];
                 AlternativaParse resposta = (AlternativaParse) objects[1];
-                respostas.put(questao, resposta);
+                respostasMultiplaEscolha.put(questao, resposta);
             }
         };
     }
@@ -110,11 +139,8 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
     }
 
     private void proximo(int atual) {
-        if(atual == (uiHelper.main.getChildCount() - 2)) {
-            //Finalizar
-        }
-        ItemQuestionarioMultiplaEscolhaUiHelper current = (ItemQuestionarioMultiplaEscolhaUiHelper) uiHelper.main.getChildAt(atual).getTag();
-        if(current.respostaSelecionada != null){
+        AbstractItemQuestionario current = (AbstractItemQuestionario) uiHelper.main.getChildAt(atual).getTag();
+        if(current.respostaSelecionada != null || current instanceof ItemQuestaoMultiplaRespostaUiHelper){
             uiHelper.main.setInAnimation(this, R.anim.in_direita_para_esquerda);
             uiHelper.main.setOutAnimation(this, R.anim.out_direita_para_esquerda);
             uiHelper.main.showNext();
@@ -169,8 +195,8 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
     }
 
     private void validarESalvarQuestionario() {
-        ItemQuestionarioMultiplaEscolhaUiHelper current = (ItemQuestionarioMultiplaEscolhaUiHelper) uiHelper.main.getChildAt(uiHelper.main.getDisplayedChild()).getTag();
-        if(current.respostaSelecionada != null){
+        AbstractItemQuestionario current = (AbstractItemQuestionario) uiHelper.main.getChildAt(uiHelper.main.getDisplayedChild()).getTag();
+        if(current.respostaSelecionada != null || current instanceof AbstractItemQuestionario){
             salvar();
         }else{
             exibirMensagem(R.string.questionario_validacao_ultima_questao);
@@ -181,15 +207,23 @@ public class QuestionarioActivity extends Activity implements View.OnTouchListen
         progressSalvar = ProgressDialog.show(this, getString(R.string.questionario_salvando_questionario),
                 getString(R.string.questionario_salvando_questionario_msg), true, false);
         entrevista.setFim(new Date());
-        List<ParseObject> resultados = new ArrayList<ParseObject>();
-        RespostaParse resultado;
-        for(Map.Entry<QuestaoParse, AlternativaParse> item : respostas.entrySet()){
-            resultado = new RespostaParse();
-            resultado.setResposta(item.getValue());
-            resultado.setEntrevista(entrevista);
-            resultados.add(resultado);
+        List<ParseObject> respostas = new ArrayList<ParseObject>();
+        RespostaParse respostaParse;
+        for(Map.Entry<QuestaoParse, AlternativaParse> item : respostasMultiplaEscolha.entrySet()){
+            respostaParse = new RespostaParse();
+            respostaParse.setEntrevista(entrevista);
+            respostaParse.setAlternativa(item.getValue());
+            respostas.add(respostaParse);
         }
-        RespostaService.salvarRespostasInLocal(resultados, configurarOnSalvarResultadosCallback());
+        for(Map.Entry<QuestaoParse, Set<AlternativaParse>> item : respostasMultiplaRespostas.entrySet()){
+            for (AlternativaParse alternativaParse : item.getValue()){
+                respostaParse = new RespostaParse();
+                respostaParse.setEntrevista(entrevista);
+                respostaParse.setAlternativa(alternativaParse);
+                respostas.add(respostaParse);
+            }
+        }
+        RespostaService.salvarRespostasInLocal(respostas, configurarOnSalvarResultadosCallback());
     }
 
     private SaveCallback configurarOnSalvarResultadosCallback() {
